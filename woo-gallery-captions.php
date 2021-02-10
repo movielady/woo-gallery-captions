@@ -35,6 +35,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function gcw_insert_captions( $html, $attachment_id ) {
 
+	// allow specific html entities to display in caption
+	$allowed_html = [
+		'a'      => [
+			'href'  => [],
+			'title' => [],
+		],
+		'br'     => [],
+		'em'     => [],
+		'strong' => [],
+		'i'      => [],
+		'b'      => [],
+	];
+	
 	$captions = '';
 
 	if ( get_post_field( 'post_type', $attachment_id ) !== 'attachment' ) {
@@ -43,12 +56,12 @@ function gcw_insert_captions( $html, $attachment_id ) {
 
 	$title = get_post_field( 'post_title', $attachment_id );
 	if ( ! empty( $title ) ) {
-		$captions .= '<h5>' . esc_html( $title ) . '</h5>';
+		$captions .= '<h5>' . wp_kses( $title, $allowed_html ) . '</h5>';
 	}
 
 	$caption = get_post_field( 'post_excerpt', $attachment_id );
 	if ( ! empty( $caption ) ) {
-		$captions .= '<p>' . esc_html( $caption ) . '</p>';
+		$captions .= '<p>' . wp_kses( $caption, $allowed_html ) . '</p>';
 	}
 
 	if ( ! empty( $captions ) ) {
